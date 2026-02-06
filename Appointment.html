@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2: Appointment Management</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --success: #16a34a;
+            --danger: #dc2626;
+            --bg: #f1f5f9;
+        }
+
+        body { font-family: 'Inter', sans-serif; background: var(--bg); margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; }
+        
+        /* Layout Card */
+        .card { background: white; padding: 2rem; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+        h2 { margin-top: 0; color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+
+        /* Form Grid */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .input-group { display: flex; flex-direction: column; }
+        label { font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: var(--secondary); }
+        input, select { padding: 10px; border: 1px solid #cbd5e1; border-radius: 5px; outline: none; }
+        input:focus { border-color: var(--primary); }
+
+        /* Buttons */
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        .btn-add { background: var(--primary); color: white; width: 100%; }
+        .btn-add:hover { background: #1d4ed8; }
+        .btn-cancel { background: #fee2e2; color: var(--danger); font-size: 0.75rem; }
+        .btn-cancel:hover { background: var(--danger); color: white; }
+
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; background: #f8fafc; color: var(--secondary); padding: 12px; font-size: 0.85rem; border-bottom: 2px solid #e2e8f0; }
+        td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; }
+        .status-pill { padding: 4px 8px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; background: #dcfce7; color: #15803d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🔹 Appointment Management</h2>
+
+    <div class="card">
+        <h3>Schedule New Appointment</h3>
+        <form id="appointmentForm">
+            <div class="form-grid">
+                <div class="input-group">
+                    <label>Patient Name</label>
+                    <input type="text" id="pName" placeholder="Full Name" required>
+                </div>
+                <div class="input-group">
+                    <label>Select Doctor</label>
+                    <select id="docName" required>
+                        <option value="">-- Choose Doctor --</option>
+                        <option value="Dr. Aris (General)">Dr. Aris (General)</option>
+                        <option value="Dr. Elena (Cardiology)">Dr. Elena (Cardiology)</option>
+                        <option value="Dr. Marcus (Neurology)">Dr. Marcus (Neurology)</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="appDate" required>
+                </div>
+                <div class="input-group">
+                    <label>Time</label>
+                    <input type="time" id="appTime" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-add">Confirm Booking</button>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3>Active Appointments</h3>
+        <table id="appTable">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Patient</th>
+                    <th>Doctor</th>
+                    <th>Date & Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    // State management (Mock Database)
+    let appointments = [
+        { id: 'APT-1001', patient: 'John Doe', doctor: 'Dr. Aris (General)', date: '2026-02-10', time: '10:30', status: 'Confirmed' }
+    ];
+
+    const form = document.getElementById('appointmentForm');
+    const tableBody = document.getElementById('tableBody');
+
+    // Function to render the table
+    function renderTable() {
+        tableBody.innerHTML = '';
+        appointments.forEach((app, index) => {
+            const row = `
+                <tr>
+                    <td>${app.id}</td>
+                    <td><strong>${app.patient}</strong></td>
+                    <td>${app.doctor}</td>
+                    <td>${app.date} | ${app.time}</td>
+                    <td><span class="status-pill">${app.status}</span></td>
+                    <td>
+                        <button class="btn btn-cancel" onclick="cancelAppointment(${index})">Cancel</button>
+                    </td>
+                </tr>
+            `;
+            tableBody.innerHTML += row;
+        });
+    }
+
+    // Handle Form Submission
+    form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        const newApp = {
+            id: 'APT-' + Math.floor(1000 + Math.random() * 9000),
+            patient: document.getElementById('pName').value,
+            doctor: document.getElementById('docName').value,
+            date: document.getElementById('appDate').value,
+            time: document.getElementById('appTime').value,
+            status: 'Confirmed'
+        };
+
+        appointments.push(newApp);
+        renderTable();
+        form.reset();
+    });
+
+    // Handle Cancellation
+    function cancelAppointment(index) {
+        if(confirm("Are you sure you want to cancel this appointment?")) {
+            appointments.splice(index, 1);
+            renderTable();
+        }
+    }
+
+    // Initial Load
+    renderTable();
+</script>
+
+</body>
+</html>
