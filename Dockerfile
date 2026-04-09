@@ -1,7 +1,9 @@
-FROM node:18
+FROM maven:3.9.6-eclipse-temurin-17
+
 WORKDIR /app
-COPY package*.json ./
-RUN npm install
+
 COPY . .
-EXPOSE 3000
-CMD ["node", "server.js"]
+
+RUN mvn clean package
+
+CMD ["java", "-jar", "target/healthcare-system-1.0-SNAPSHOT.jar"]
