@@ -1,341 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
-<meta charset="UTF-8">
-<title>MediFlow | Doctor Management</title>
-
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:"Segoe UI",sans-serif;
-}
-
-body{
-background:#f4f7f6;
-padding:40px;
-}
-
-/* HEADER */
-
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:30px;
-}
-
-.header h2{
-color:#00695c;
-}
-
-/* FORM */
-
-.form-grid{
-
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:15px;
-margin-bottom:25px;
-
-}
-
-.form-grid input,
-.form-grid select{
-
-padding:12px;
-border-radius:8px;
-border:1px solid #ccc;
-
-}
-
-.btn-save{
-
-background:#009688;
-color:white;
-border:none;
-padding:12px;
-border-radius:8px;
-cursor:pointer;
-font-weight:600;
-
-}
-
-/* SEARCH */
-
-.search{
-
-margin-bottom:20px;
-width:100%;
-padding:12px;
-border-radius:10px;
-border:1px solid #ddd;
-
-}
-
-/* TABLE */
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-border-radius:15px;
-overflow:hidden;
-}
-
-th{
-background:#f1f1f1;
-padding:15px;
-text-align:left;
-}
-
-td{
-padding:15px;
-border-bottom:1px solid #eee;
-}
-
-.badge{
-
-padding:5px 10px;
-border-radius:20px;
-font-size:12px;
-font-weight:bold;
-
-}
-
-.available{
-background:#dcfce7;
-color:#166534;
-}
-
-.leave{
-background:#fee2e2;
-color:#991b1b;
-}
-
-.back-btn{
-
-background:#004d40;
-color:white;
-border:none;
-padding:10px 18px;
-border-radius:8px;
-cursor:pointer;
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Quiz</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f0f2f5; }
+        .quiz-container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; }
+        h1 { text-align: center; color: #333; }
+        .stats { display: flex; justify-content: space-between; margin: 15px 0; padding: 10px; background: #e9ecef; border-radius: 8px; }
+        .question-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 8px; }
+        .question-text { font-weight: bold; margin-bottom: 10px; }
+        .required { color: red; font-size: 12px; }
+        .options { margin-left: 20px; }
+        .option { margin: 8px 0; display: flex; align-items: center; gap: 8px; }
+        input[type="radio"] { cursor: pointer; }
+        .feedback { margin-top: 10px; padding: 8px; border-radius: 5px; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: #d4edda; color: #155724; }
+        .feedback.incorrect { background: #f8d7da; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .submit-btn { background: #28a745; color: white; }
+        .reset-btn { background: #6c757d; color: white; }
+        .result-area { margin-top: 20px; padding: 15px; background: #e8f5e9; border-radius: 8px; text-align: center; display: none; }
+        .result-area.show { display: block; }
+        .score-number { font-size: 32px; font-weight: bold; color: #28a745; }
+        .error-msg { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; display: none; text-align: center; }
+        .error-msg.show { display: block; }
+    </style>
 </head>
-
 <body>
-
-<div class="header">
-
-<h2>👨‍⚕️ Doctor Management</h2>
-
-<button class="back-btn"
-onclick="window.location.href='index.html'">
-
-← Back to Dashboard
-
-</button>
-
+<div class="quiz-container">
+    <h1>📋 Quick Quiz</h1>
+    
+    <div class="stats">
+        <div>Total: <span id="totalQuestions">0</span></div>
+        <div>Answered: <span id="answeredCount">0</span></div>
+        <div>Status: <span id="status">Not submitted</span></div>
+    </div>
+    
+    <div id="errorMsg" class="error-msg">⚠️ Please answer all questions!</div>
+    <div id="questionsContainer"></div>
+    
+    <div style="margin-top: 20px;">
+        <button class="submit-btn" id="submitBtn">Submit Quiz</button>
+        <button class="reset-btn" id="resetBtn">Reset</button>
+    </div>
+    
+    <div id="resultArea" class="result-area"></div>
 </div>
-
-
-<input id="searchDoctor"
-class="search"
-onkeyup="filterDoctors()"
-placeholder="🔍 Search Doctor by Name or ID">
-
-
-<div class="form-grid">
-
-<input id="dname" placeholder="Doctor Name">
-
-<select id="dspecialization">
-<option value="">Specialization</option>
-<option>Cardiologist</option>
-<option>Neurologist</option>
-<option>Orthopedic</option>
-<option>General Physician</option>
-<option>Pediatrician</option>
-</select>
-
-<input id="dexperience"
-placeholder="Experience (Years)">
-
-<select id="dstatus">
-<option>Available</option>
-<option>On Leave</option>
-</select>
-
-<button onclick="addDoctor()" class="btn-save">
-Add Doctor
-</button>
-
-</div>
-
-
-<table>
-
-<thead>
-
-<tr>
-<th>ID</th>
-<th>Name</th>
-<th>Specialization</th>
-<th>Experience</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-
-</thead>
-
-<tbody id="doctorTable"></tbody>
-
-</table>
-
-
 
 <script>
-
-/* STORAGE */
-
-let doctors = JSON.parse(localStorage.getItem("doctors")) || [];
-
-
-/* ADD DOCTOR */
-
-function addDoctor(){
-
-if(!dname.value || !dspecialization.value)
-return alert("Fill Doctor Name and Specialization");
-
-doctors.push({
-
-id:"DOC-"+Math.floor(1000+Math.random()*9000),
-name:dname.value,
-specialization:dspecialization.value,
-experience:dexperience.value,
-status:dstatus.value
-
-});
-
-saveDoctors();
-
-dname.value="";
-dexperience.value="";
-
-}
-
-
-/* DELETE */
-
-function deleteDoctor(index){
-
-if(confirm("Delete doctor record?")){
-
-doctors.splice(index,1);
-saveDoctors();
-
-}
-
-}
-
-
-/* SAVE */
-
-function saveDoctors(){
-
-localStorage.setItem("doctors",
-JSON.stringify(doctors));
-
-renderDoctors(doctors);
-
-}
-
-
-/* DISPLAY */
-
-function renderDoctors(list){
-
-let table=document.getElementById("doctorTable");
-
-table.innerHTML="";
-
-list.forEach((d,i)=>{
-
-let statusClass =
-d.status==="Available" ? "available" : "leave";
-
-table.innerHTML+=`
-
-<tr>
-
-<td style="font-weight:bold;color:#009688">${d.id}</td>
-
-<td>${d.name}</td>
-
-<td>${d.specialization}</td>
-
-<td>${d.experience} yrs</td>
-
-<td><span class="badge ${statusClass}">${d.status}</span></td>
-
-<td>
-
-<button onclick="deleteDoctor(${i})"
-style="border:none;background:none;color:red;cursor:pointer">
-
-<i class="fa-solid fa-trash"></i>
-
-</button>
-
-</td>
-
-</tr>
-
-`;
-
-});
-
-}
-
-
-/* SEARCH */
-
-function filterDoctors(){
-
-let query=document
-.getElementById("searchDoctor")
-.value.toLowerCase();
-
-let filtered=doctors.filter(d=>
-
-d.name.toLowerCase().includes(query) ||
-d.id.toLowerCase().includes(query)
-
-);
-
-renderDoctors(filtered);
-
-}
-
-
-/* INIT */
-
-renderDoctors(doctors);
-
+    const quizData = [
+        { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Layout", "Hyper Transfer Markup Language", "Home Tool Markup Language"], correct: 0 },
+        { question: "Which JavaScript method selects an element by ID?", options: ["querySelector()", "getElementById()", "getElementsByClassName()", "selectId()"], correct: 1 },
+        { question: "What does CSS stand for?", options: ["Creative Style Sheets", "Computer Style Sheets", "Cascading Style Sheets", "Colorful Style Sheets"], correct: 2 },
+        { question: "Correct way to write a JavaScript array?", options: ["var colors = 'red', 'green'", "var colors = (1:'red')", "var colors = ['red', 'green']", "var colors = {red, green}"], correct: 2 },
+        { question: "What does DOM stand for?", options: ["Document Object Model", "Data Object Management", "Display Orientation Module", "Document Oriented Model"], correct: 0 }
+    ];
+    
+    let userAnswers = new Array(quizData.length).fill(-1);
+    let isSubmitted = false;
+    
+    const questionsDiv = document.getElementById('questionsContainer');
+    const totalSpan = document.getElementById('totalQuestions');
+    const answeredSpan = document.getElementById('answeredCount');
+    const statusSpan = document.getElementById('status');
+    const errorMsg = document.getElementById('errorMsg');
+    const resultArea = document.getElementById('resultArea');
+    
+    function updateStats() {
+        let answered = userAnswers.filter(a => a !== -1).length;
+        totalSpan.textContent = quizData.length;
+        answeredSpan.textContent = answered;
+        if (!isSubmitted) {
+            statusSpan.textContent = answered === quizData.length ? "Ready" : "In progress";
+        } else {
+            statusSpan.textContent = "Completed";
+        }
+    }
+    
+    function hideError() { errorMsg.classList.remove('show'); }
+    function showError() { errorMsg.classList.add('show'); setTimeout(() => errorMsg.classList.remove('show'), 3000); }
+    
+    function renderQuestions() {
+        questionsDiv.innerHTML = '';
+        quizData.forEach((q, idx) => {
+            let card = document.createElement('div');
+            card.className = 'question-card';
+            card.innerHTML = `<div class="question-text">${idx+1}. ${q.question} <span class="required">*</span></div><div class="options" id="opts-${idx}"></div><div class="feedback" id="fb-${idx}"></div>`;
+            questionsDiv.appendChild(card);
+            
+            let optsDiv = document.getElementById(`opts-${idx}`);
+            q.options.forEach((opt, optIdx) => {
+                let wrapper = document.createElement('div');
+                wrapper.className = 'option';
+                let radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = `q${idx}`;
+                radio.value = optIdx;
+                radio.disabled = isSubmitted;
+                if (userAnswers[idx] === optIdx && !isSubmitted) radio.checked = true;
+                radio.onchange = (function(i, oi) {
+                    return function() { if (!isSubmitted && this.checked) { userAnswers[i] = oi; updateStats(); hideError(); document.getElementById(`fb-${i}`).classList.remove('show'); } };
+                })(idx, optIdx);
+                let label = document.createElement('label');
+                label.textContent = `${String.fromCharCode(65+optIdx)}. ${opt}`;
+                wrapper.appendChild(radio);
+                wrapper.appendChild(label);
+                optsDiv.appendChild(wrapper);
+            });
+        });
+        updateStats();
+    }
+    
+    function calculateAndDisplayResults() {
+        let score = 0;
+        quizData.forEach((q, i) => {
+            let isCorrect = (userAnswers[i] === q.correct);
+            if (isCorrect) score++;
+            let fb = document.getElementById(`fb-${i}`);
+            if (isCorrect) {
+                fb.innerHTML = '✅ Correct!';
+                fb.className = 'feedback correct show';
+            } else {
+                let correctText = q.options[q.correct];
+                let userText = userAnswers[i] !== -1 ? q.options[userAnswers[i]] : "No answer";
+                fb.innerHTML = `❌ Incorrect! Correct: "${correctText}"`;
+                fb.className = 'feedback incorrect show';
+            }
+        });
+        let percentage = Math.round((score / quizData.length) * 100);
+        let msg = score === quizData.length ? 'Perfect!' : score >= 3 ? 'Good job!' : 'Try again!';
+        resultArea.innerHTML = `<div class="score-number">${score} / ${quizData.length}</div><div>${msg} (${percentage}%)</div>`;
+        resultArea.classList.add('show');
+        isSubmitted = true;
+        updateStats();
+        document.querySelectorAll('input[type="radio"]').forEach(r => r.disabled = true);
+    }
+    
+    function handleSubmit() {
+        if (isSubmitted) { alert('Already submitted! Click Reset.'); return; }
+        if (userAnswers.some(a => a === -1)) {
+            showError();
+            let first = userAnswers.findIndex(a => a === -1);
+            let cards = document.querySelectorAll('.question-card');
+            if (cards[first]) cards[first].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+        hideError();
+        calculateAndDisplayResults();
+    }
+    
+    function handleReset() {
+        userAnswers = new Array(quizData.length).fill(-1);
+        isSubmitted = false;
+        resultArea.innerHTML = '';
+        resultArea.classList.remove('show');
+        hideError();
+        renderQuestions();
+        updateStats();
+    }
+    
+    renderQuestions();
+    document.getElementById('submitBtn').onclick = handleSubmit;
+    document.getElementById('resetBtn').onclick = handleReset;
 </script>
-
 </body>
 </html>

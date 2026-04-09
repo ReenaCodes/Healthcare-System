@@ -1,13 +1,11 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MediFlow | Professional HMS</title>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>MediFlow | Professional HMS - Login</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
   <style>
-    /* ---------- GLOBAL & THEME ---------- */
     * {
       margin: 0;
       padding: 0;
@@ -20,7 +18,6 @@
       color: #333;
     }
 
-    /* ---------- AUTH (LOGIN/REG) ---------- */
     .auth {
       height: 100vh;
       display: flex;
@@ -85,13 +82,11 @@
       text-decoration: underline;
     }
 
-    /* ---------- DASHBOARD STRUCTURE ---------- */
     .dashboard {
-      display: none; /* Initially hidden */
+      display: none;
       height: 100vh;
     }
 
-    /* SIDEBAR */
     .sidebar {
       width: 260px;
       background: #004d40;
@@ -126,11 +121,11 @@
       color: white;
     }
 
-    /* MAIN CONTENT */
     .content {
       flex: 1;
       padding: 35px;
       overflow-y: auto;
+      background: #f4f7f6;
     }
 
     .module {
@@ -147,7 +142,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* ---------- HOME PAGE DESIGN ---------- */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -167,7 +161,6 @@
     .stat-card h4 { font-size: 24px; color: #333; }
     .stat-card p { color: #666; font-size: 14px; }
 
-    /* ---------- TABLES & FORMS ---------- */
     .form-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -181,7 +174,8 @@
       border: 1px solid #ccc;
     }
 
-    .btn-save { background: #009688; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; }
+    .btn-save { background: #009688; color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;}
+    .btn-save:hover { background: #00796b; transform: scale(1.01);}
     
     table { width: 100%; border-collapse: collapse; margin-top: 20px; }
     th { background: #f1f1f1; color: #555; text-align: left; padding: 15px; border-bottom: 2px solid #ddd; }
@@ -190,16 +184,25 @@
     .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
     .admitted { background: #dcfce7; color: #166534; }
     .discharged { background: #fee2e2; color: #991b1b; }
+    .edit-icon, .delete-icon { cursor: pointer; margin: 0 4px; font-size: 18px; transition: 0.2s;}
+    .edit-icon:hover { color: #009688; }
+    .delete-icon:hover { color: #d32f2f; }
+    .action-buttons { display: flex; gap: 10px; align-items: center; }
+    .search-section { margin-bottom: 20px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;}
+    .search-section input { flex: 1; padding: 12px; border-radius: 10px; border: 1px solid #ddd; }
+
+    .status-badge { padding: 4px 10px; border-radius: 30px; font-size: 12px; font-weight: 600; background: #e9ecef;}
+    .status-confirmed { background: #c8e6e0; color: #00695c;}
+    .small-btn { background: #00968820; border: 1px solid #009688; padding: 6px 12px; border-radius: 30px; cursor: pointer; font-weight: 500;}
+    .success-msg { background: #d4edda; color: #155724; padding: 10px; border-radius: 8px; margin-bottom: 15px; display: none; }
   </style>
 </head>
 <body>
 
-<!-- ---------- AUTH (LOGIN + REGISTER) ---------- -->
+<!-- AUTH PAGE -->
 <div class="auth" id="authPage">
   <div class="auth-box">
     <h2 id="authTitle">Secure Login</h2>
-
-    <!-- Login Form -->
     <div id="loginForm">
       <i class="fa-solid fa-hospital main-icon"></i>
       <input id="lEmail" placeholder="Email (admin@hms.com)">
@@ -207,8 +210,6 @@
       <button onclick="login()">Login to Dashboard</button>
       <div class="switch" onclick="toggleAuth()">New Admin? Register Account</div>
     </div>
-
-    <!-- Registration Form -->
     <div id="registerForm" style="display:none;">
       <i class="fa-solid fa-user-plus main-icon"></i>
       <input id="rName" placeholder="Full Name">
@@ -226,115 +227,151 @@
   </div>
 </div>
 
-<!-- ---------- DASHBOARD ---------- -->
+<!-- DASHBOARD -->
 <div class="dashboard" id="dashboard">
-
   <div class="sidebar">
     <h3><i class="fa-solid fa-heart-pulse"></i> MediFlow</h3>
     <a onclick="showModule('home')" id="link-home" class="active"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
     <a onclick="showModule('patient')" id="link-patient"><i class="fa-solid fa-bed"></i> Patient Mgmt</a>
-   <a href="doctor.html" id="link-doctor">
-<i class="fa-solid fa-user-md"></i> Doctors
-</a>
-   <a href="appointment.html" id="link-appointment">
-  <i class="fa-solid fa-calendar-check"></i> Appointments
-</a>
-
+    <a onclick="showModule('doctors')" id="link-doctors"><i class="fa-solid fa-user-md"></i> Doctors</a>
+    <a onclick="showModule('appointment')" id="link-appointment"><i class="fa-solid fa-calendar-check"></i> Appointments</a>
     <div style="margin-top: auto;">
        <a onclick="logout()" style="color: #ff8a80;"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
     </div>
-
-    
   </div>
-    
 
   <div class="content">
-
+    <!-- HOME MODULE -->
     <div class="module" id="home" style="display:block;">
       <h2 style="margin-bottom: 20px;">Welcome back, <span id="adminDisplayName">Admin</span></h2>
-      
       <div class="stats-grid">
-        <div class="stat-card">
-          <i class="fa-solid fa-users"></i>
-          <h4 id="stat-patient-count">0</h4>
-          <p>Total Patients</p>
-        </div>
-        <div class="stat-card">
-          <i class="fa-solid fa-user-doctor"></i>
-          <h4>14</h4>
-          <p>Active Doctors</p>
-        </div>
-        <div class="stat-card">
-          <i class="fa-solid fa-hospital-user"></i>
-          <h4>8</h4>
-          <p>Today's Admissions</p>
-        </div>
+        <div class="stat-card"><i class="fa-solid fa-users"></i><h4 id="stat-patient-count">0</h4><p>Total Patients</p></div>
+        <div class="stat-card"><i class="fa-solid fa-user-doctor"></i><h4 id="stat-doctor-count">0</h4><p>Active Doctors</p></div>
+        <div class="stat-card"><i class="fa-solid fa-calendar-check"></i><h4 id="stat-appointment-count">0</h4><p>Total Appointments</p></div>
+        <div class="stat-card"><i class="fa-solid fa-hospital-user"></i><h4 id="stat-admitted-count">0</h4><p>Admitted Patients</p></div>
       </div>
-
       <div style="background: #fff; padding: 25px; border-radius: 15px; border: 1px solid #eee;">
         <h3>Hospital Status Overview</h3>
-        <p style="color: #666; margin-top: 10px;">The system is running smoothly. You have 3 pending appointment approvals and the pharmacy inventory was updated 2 hours ago.</p>
-        <button class="btn-save" style="margin-top: 15px;" onclick="showModule('patient')">View Patient List</button>
+        <p style="color: #666; margin-top: 10px;">System running optimally. Manage patients, doctors, and appointments from the sidebar.</p>
+        <button class="btn-save" style="margin-top: 15px;" onclick="showModule('appointment')">View Appointments</button>
       </div>
     </div>
 
+    <!-- PATIENT MODULE -->
     <div class="module" id="patient">
       <h2>🛏 Patient Management</h2>
-      <br>
-      <input id="searchPatient" onkeyup="filterPatients()" placeholder="🔍 Search by Name or ID..." 
-             style="margin-bottom:20px; width:100%; padding:12px; border-radius:10px; border:1px solid #ddd">
-
+      <div class="search-section">
+        <input id="searchPatient" onkeyup="filterPatients()" placeholder="🔍 Search by Name or ID...">
+      </div>
       <div class="form-grid">
         <input id="pname" placeholder="Full Name">
         <input id="page" placeholder="Age">
-        <select id="pgender">
-          <option value="">Gender</option>
-          <option>Male</option>
-          <option>Female</option>
-        </select>
+        <select id="pgender"><option value="">Gender</option><option>Male</option><option>Female</option></select>
         <input id="phistory" placeholder="Medical History">
-        <select id="pstatus">
-          <option>Admitted</option>
-          <option>Discharged</option>
-        </select>
-        <button onclick="addPatient()" id="addBtn" class="btn-save">Add Patient</button>
+        <select id="pstatus"><option>Admitted</option><option>Discharged</option></select>
+        <button onclick="addPatient()" class="btn-save">Add Patient</button>
       </div>
+      <table><thead><tr><th>ID</th><th>Name</th><th>Age/Sex</th><th>Status</th><th>Actions</th></tr></thead><tbody id="patientTable"></tbody></table>
+    </div>
 
+    <!-- DOCTORS MODULE -->
+    <div class="module" id="doctors">
+      <div class="section-title">
+        <h2><i class="fa-solid fa-user-md"></i> Doctors Directory</h2>
+        <button class="small-btn" onclick="openDoctorModal()"><i class="fa-solid fa-plus"></i> Add Doctor</button>
+      </div>
+      <div class="search-section">
+        <input id="searchDoctor" onkeyup="filterDoctors()" placeholder="🔍 Search doctor by name, specialty...">
+      </div>
+      <table><thead><tr><th>ID</th><th>Name</th><th>Specialty</th><th>Phone</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="doctorTableBody"></tbody></table>
+    </div>
+
+    <!-- APPOINTMENT MODULE - FIXED -->
+    <div class="module" id="appointment">
+      <div class="section-title">
+        <h2><i class="fa-solid fa-calendar-check"></i> Appointment Scheduling</h2>
+        <button class="small-btn" onclick="openAppointmentModal()"><i class="fa-solid fa-plus"></i> Schedule Appointment</button>
+      </div>
+      <div id="appointmentSuccessMsg" class="success-msg"></div>
+      <div class="search-section">
+        <input id="searchAppointment" onkeyup="filterAppointments()" placeholder="🔍 Filter by patient, doctor, or date...">
+      </div>
       <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Age/Sex</th>
-            <th>Status</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="patientTable"></tbody>
+        <thead><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date & Time</th><th>Reason</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="appointmentTableBody"></tbody>
       </table>
     </div>
+  </div>
+</div>
 
-    
+<!-- MODALS -->
+<div id="doctorModal" style="display:none; position:fixed; top:0;left:0; width:100%; height:100%; background:#00000099; align-items:center; justify-content:center; z-index:1000;">
+  <div style="background:white; max-width:450px; margin:auto; border-radius:24px; padding:30px;">
+    <h3>👨‍⚕️ Doctor Details</h3>
+    <input id="docName" placeholder="Full Name" style="width:100%; margin:10px 0; padding:10px;">
+    <input id="docSpecialty" placeholder="Specialty" style="width:100%; margin:10px 0; padding:10px;">
+    <input id="docPhone" placeholder="Phone" style="width:100%; margin:10px 0; padding:10px;">
+    <input id="docEmail" placeholder="Email" style="width:100%; margin:10px 0; padding:10px;">
+    <select id="docStatus" style="width:100%; margin:10px 0; padding:10px;"><option>Active</option><option>On Leave</option></select>
+    <button onclick="saveDoctor()" class="btn-save">Save Doctor</button>
+    <button onclick="closeDoctorModal()" style="margin-left:10px; background:#ccc;">Cancel</button>
+  </div>
+</div>
 
-    <div class="module" id="appointment">
-      <h2>Module 3 – Appointment Management</h2>
-      <p>Schedule and track patient visits.</p>
-    </div>
-
+<div id="appointmentModal" style="display:none; position:fixed; top:0;left:0; width:100%; height:100%; background:#00000099; align-items:center; justify-content:center; z-index:1000;">
+  <div style="background:white; max-width:450px; margin:auto; border-radius:24px; padding:30px;">
+    <h3>📅 New Appointment</h3>
+    <input id="aptPatient" placeholder="Patient Name" style="width:100%; margin:10px 0; padding:10px;" list="patientListDatalist">
+    <datalist id="patientListDatalist"></datalist>
+    <input id="aptDoctor" placeholder="Doctor Name" style="width:100%; margin:10px 0; padding:10px;" list="doctorListDatalist">
+    <datalist id="doctorListDatalist"></datalist>
+    <input id="aptDateTime" type="datetime-local" style="width:100%; margin:10px 0; padding:10px;">
+    <input id="aptReason" placeholder="Reason / Symptoms" style="width:100%; margin:10px 0; padding:10px;">
+    <select id="aptStatus" style="width:100%; margin:10px 0; padding:10px;"><option>Scheduled</option><option>Completed</option><option>Cancelled</option></select>
+    <button onclick="saveAppointment()" class="btn-save">Schedule Appointment</button>
+    <button onclick="closeAppointmentModal()" style="margin-left:10px; background:#ccc;">Cancel</button>
   </div>
 </div>
 
 <script>
-/* ---------- DATA STORAGE ---------- */
-let patients = JSON.parse(localStorage.getItem("patients")) || [];
-let currentUser = JSON.parse(localStorage.getItem("activeUser")) || null;
+// Clear session on page load to show login first
+localStorage.removeItem("activeUser");
 
-/* ---------- AUTH LOGIC ---------- */
+// DATA STORAGE
+let patients = JSON.parse(localStorage.getItem("patients")) || [];
+let doctors = JSON.parse(localStorage.getItem("doctors")) || [];
+let appointments = JSON.parse(localStorage.getItem("appointments")) || [];
+let currentUser = null;
+
+// Initialize demo data
+if(doctors.length === 0) {
+  doctors = [
+    {id:"DOC-1001", name:"Dr. Sarah Chen", specialty:"Cardiology", phone:"+1 555 2345", email:"s.chen@mediflow.com", status:"Active"},
+    {id:"DOC-1002", name:"Dr. James Wu", specialty:"Neurology", phone:"+1 555 6789", email:"j.wu@mediflow.com", status:"Active"}
+  ];
+  localStorage.setItem("doctors", JSON.stringify(doctors));
+}
+
+if(patients.length === 0) {
+  patients = [
+    {id:"PAT-101", name:"Michael Lee", age:"45", gender:"Male", history:"Hypertension", status:"Admitted"},
+    {id:"PAT-102", name:"Emily Rose", age:"32", gender:"Female", history:"Regular checkup", status:"Discharged"}
+  ];
+  localStorage.setItem("patients", JSON.stringify(patients));
+}
+
+if(appointments.length === 0) {
+  appointments = [
+    {id:"APT-2001", patient:"Emily Rose", doctor:"Dr. Sarah Chen", dateTime:"2026-04-10T10:30", reason:"Chest pain", status:"Scheduled"}
+  ];
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+}
+
+// AUTH FUNCTIONS
 function toggleAuth() {
   let loginForm = document.getElementById("loginForm");
   let registerForm = document.getElementById("registerForm");
   let title = document.getElementById("authTitle");
-
   if(loginForm.style.display === "none") {
     loginForm.style.display = "block";
     registerForm.style.display = "none";
@@ -346,120 +383,361 @@ function toggleAuth() {
   }
 }
 
-function register(){
-  let name = rName.value;
-  let email = rEmail.value;
-  let pass = rPass.value;
-  let role = rRole.value;
-
+function register() {
+  let name = document.getElementById("rName").value;
+  let email = document.getElementById("rEmail").value;
+  let pass = document.getElementById("rPass").value;
+  let role = document.getElementById("rRole").value;
   if(!name || !email || !pass) return alert("Please fill all fields");
-
+  if(!role) return alert("Please select a role");
   localStorage.setItem("user_account", JSON.stringify({name, email, pass, role}));
-  alert("Registration Successful!");
-  toggleAuth(); // Switch to login
+  alert("Registration Successful! Please login.");
+  toggleAuth();
+  document.getElementById("rName").value = "";
+  document.getElementById("rEmail").value = "";
+  document.getElementById("rPass").value = "";
+  document.getElementById("rRole").value = "";
 }
 
-function login(){
+function login() {
   let savedUser = JSON.parse(localStorage.getItem("user_account"));
-  let email = lEmail.value;
-  let pass = lPass.value;
-
+  let email = document.getElementById("lEmail").value;
+  let pass = document.getElementById("lPass").value;
+  
   if((email === "admin@hms.com" && pass === "1234") || (savedUser && savedUser.email === email && savedUser.pass === pass)){
     currentUser = savedUser || {name: "Administrator", role: "Superuser"};
     localStorage.setItem("activeUser", JSON.stringify(currentUser));
-    
     document.getElementById("adminDisplayName").innerText = currentUser.name;
-    document.getElementById("authPage").style.display="none";
-    dashboard.style.display="flex";
-    updateStats();
-    showModule('home'); 
+    document.getElementById("authPage").style.display = "none";
+    document.getElementById("dashboard").style.display = "flex";
+    updateAllStats();
+    renderAllTables();
+    showModule('home');
+    document.getElementById("lEmail").value = "";
+    document.getElementById("lPass").value = "";
   } else {
-    alert("Invalid Credentials");
+    alert("Invalid Credentials! Use admin@hms.com / 1234");
   }
 }
 
-function logout(){
+function logout() {
   localStorage.removeItem("activeUser");
-  location.reload();
+  document.getElementById("dashboard").style.display = "none";
+  document.getElementById("authPage").style.display = "flex";
+  document.getElementById("loginForm").style.display = "block";
+  document.getElementById("registerForm").style.display = "none";
+  document.getElementById("authTitle").innerText = "Secure Login";
+  currentUser = null;
 }
 
-/* ---------- NAVIGATION ---------- */
-function showModule(id){
-  document.querySelectorAll(".module").forEach(m=>m.style.display="none");
-  document.querySelectorAll(".sidebar a").forEach(a=>a.classList.remove("active"));
-  
-  document.getElementById(id).style.display="block";
-  document.getElementById("link-"+id).classList.add("active");
+function showModule(id) {
+  document.querySelectorAll(".module").forEach(m => m.style.display = "none");
+  document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+  document.getElementById(id).style.display = "block";
+  if(document.getElementById("link-"+id)) document.getElementById("link-"+id).classList.add("active");
+  if(id === 'doctors') renderDoctorsTable();
+  if(id === 'appointment') renderAppointmentsTable();
+  if(id === 'patient') renderPatients(patients);
+  if(id === 'home') updateAllStats();
 }
 
-/* ---------- PATIENT LOGIC ---------- */
-function addPatient(){
-  if(!pname.value || !page.value) return alert("Fill Name and Age");
-
+// PATIENT FUNCTIONS
+function addPatient() {
+  let name = document.getElementById("pname").value;
+  let age = document.getElementById("page").value;
+  if(!name || !age) return alert("Fill Name and Age");
   patients.push({
     id: "PAT-" + Math.floor(1000 + Math.random()*9000),
-    name: pname.value,
-    age: page.value,
-    gender: pgender.value,
-    history: phistory.value,
-    status: pstatus.value
+    name: name,
+    age: age,
+    gender: document.getElementById("pgender").value,
+    history: document.getElementById("phistory").value,
+    status: document.getElementById("pstatus").value
   });
-
-  saveData();
-  pname.value = page.value = phistory.value = "";
-}
-
-function deletePatient(index){
-  if(confirm("Delete this record?")){
-    patients.splice(index, 1);
-    saveData();
-  }
-}
-
-function saveData(){
-  localStorage.setItem("patients", JSON.stringify(patients));
-  updateStats();
+  saveAllData();
+  document.getElementById("pname").value = "";
+  document.getElementById("page").value = "";
+  document.getElementById("phistory").value = "";
   renderPatients(patients);
+  alert("Patient added successfully!");
 }
 
-function renderPatients(list){
-  let table = document.getElementById("patientTable");
-  table.innerHTML = "";
+function deletePatient(idx) {
+  if(confirm("Delete patient record?")) { patients.splice(idx,1); saveAllData(); renderPatients(patients); updateAllStats(); }
+}
+
+function renderPatients(list) {
+  let tbody = document.getElementById("patientTable");
+  if(!tbody) return;
+  tbody.innerHTML = "";
   list.forEach((p, i) => {
     let sClass = p.status === "Admitted" ? "admitted" : "discharged";
-    table.innerHTML += `
-      <tr>
-        <td style="font-weight:bold; color:#009688">${p.id}</td>
-        <td>${p.name}</td>
-        <td>${p.age} / ${p.gender}</td>
-        <td><span class="badge ${sClass}">${p.status}</span></td>
-        <td>
-          <button onclick="deletePatient(${i})" style="border:none; background:none; color:red; cursor:pointer;"><i class="fa-solid fa-trash"></i></button>
-        </td>
-      </tr>`;
+    tbody.innerHTML += `<tr><td style="font-weight:bold; color:#009688">${p.id}</td><td>${p.name}</td><td>${p.age} / ${p.gender||'-'}</td><td><span class="badge ${sClass}">${p.status}</span></td><td><i class="fa-solid fa-trash delete-icon" onclick="deletePatient(${i})"></i></td></tr>`;
   });
 }
 
-/* ---------- ADVANCED FEATURES ---------- */
-function updateStats(){
-  document.getElementById("stat-patient-count").innerText = patients.length;
-}
-
-function filterPatients(){
+function filterPatients() {
   let query = document.getElementById("searchPatient").value.toLowerCase();
-  let filtered = patients.filter(p => 
-    p.name.toLowerCase().includes(query) || p.id.toLowerCase().includes(query)
-  );
+  let filtered = patients.filter(p => p.name.toLowerCase().includes(query) || p.id.toLowerCase().includes(query));
   renderPatients(filtered);
 }
 
-// Init
-if(currentUser) { 
-    login(); // Auto-login if session exists
+// DOCTOR FUNCTIONS
+function openDoctorModal() {
+  document.getElementById("doctorModal").style.display = "flex";
+  document.getElementById("docName").value = ""; 
+  document.getElementById("docSpecialty").value = "";
+  document.getElementById("docPhone").value = ""; 
+  document.getElementById("docEmail").value = "";
+  document.getElementById("docStatus").value = "Active";
+  window.currentEditDocId = null;
 }
-renderPatients(patients);
-updateStats();
-</script>
+function closeDoctorModal() { document.getElementById("doctorModal").style.display = "none"; }
+function saveDoctor() {
+  let name = document.getElementById("docName").value.trim();
+  let specialty = document.getElementById("docSpecialty").value.trim();
+  if(!name || !specialty) return alert("Doctor name & specialty required");
+  if(window.currentEditDocId) {
+    let idx = doctors.findIndex(d => d.id === window.currentEditDocId);
+    if(idx !== -1) {
+      doctors[idx] = {...doctors[idx], name, specialty, phone: document.getElementById("docPhone").value, email: document.getElementById("docEmail").value, status: document.getElementById("docStatus").value};
+    }
+  } else {
+    doctors.push({id: "DOC-" + Math.floor(1000 + Math.random()*9000), name, specialty, phone: document.getElementById("docPhone").value, email: document.getElementById("docEmail").value, status: document.getElementById("docStatus").value});
+  }
+  saveAllData();
+  closeDoctorModal();
+  renderDoctorsTable();
+  updateAllStats();
+  alert("Doctor saved successfully!");
+}
+function editDoctor(id) {
+  let doc = doctors.find(d => d.id === id);
+  if(doc) {
+    document.getElementById("docName").value = doc.name;
+    document.getElementById("docSpecialty").value = doc.specialty;
+    document.getElementById("docPhone").value = doc.phone || "";
+    document.getElementById("docEmail").value = doc.email || "";
+    document.getElementById("docStatus").value = doc.status;
+    window.currentEditDocId = doc.id;
+    document.getElementById("doctorModal").style.display = "flex";
+  }
+}
+function deleteDoctor(id) {
+  if(confirm("Remove doctor from system?")) {
+    doctors = doctors.filter(d => d.id !== id);
+    saveAllData();
+    renderDoctorsTable();
+    updateAllStats();
+  }
+}
+function renderDoctorsTable() {
+  let tbody = document.getElementById("doctorTableBody");
+  if(!tbody) return;
+  tbody.innerHTML = "";
+  doctors.forEach(doc => {
+    tbody.innerHTML += `<tr><td>${doc.id}</td><td>${doc.name}</td><td>${doc.specialty}</td><td>${doc.phone || '-'}</td><td>${doc.email || '-'}</td><td><span class="status-badge">${doc.status}</span></td><td class="action-buttons"><i class="fa-solid fa-pen edit-icon" onclick="editDoctor('${doc.id}')"></i> <i class="fa-solid fa-trash delete-icon" onclick="deleteDoctor('${doc.id}')"></i></td></tr>`;
+  });
+}
+function filterDoctors() {
+  let q = document.getElementById("searchDoctor").value.toLowerCase();
+  let filtered = doctors.filter(d => d.name.toLowerCase().includes(q) || d.specialty.toLowerCase().includes(q));
+  let tbody = document.getElementById("doctorTableBody");
+  tbody.innerHTML = "";
+  filtered.forEach(doc => {
+    tbody.innerHTML += `<tr><td>${doc.id}</td><td>${doc.name}</td><td>${doc.specialty}</td><td>${doc.phone || '-'}</td><td>${doc.email || '-'}</td><td><span class="status-badge">${doc.status}</span></td><td><i class="fa-solid fa-pen edit-icon" onclick="editDoctor('${doc.id}')"></i> <i class="fa-solid fa-trash delete-icon" onclick="deleteDoctor('${doc.id}')"></i></td></tr>`;
+  });
+}
 
+// APPOINTMENT FUNCTIONS - FIXED
+function openAppointmentModal() {
+  document.getElementById("appointmentModal").style.display = "flex";
+  document.getElementById("aptPatient").value = "";
+  document.getElementById("aptDoctor").value = "";
+  document.getElementById("aptDateTime").value = "";
+  document.getElementById("aptReason").value = "";
+  document.getElementById("aptStatus").value = "Scheduled";
+  window.currentEditAptId = null;
+  updateDatalists();
+}
+
+function updateDatalists() {
+  let patientDatalist = document.getElementById("patientListDatalist");
+  patientDatalist.innerHTML = "";
+  patients.forEach(p => { let opt = document.createElement("option"); opt.value = p.name; patientDatalist.appendChild(opt); });
+  
+  let doctorDatalist = document.getElementById("doctorListDatalist");
+  doctorDatalist.innerHTML = "";
+  doctors.forEach(d => { let opt = document.createElement("option"); opt.value = d.name; doctorDatalist.appendChild(opt); });
+}
+
+function closeAppointmentModal() { 
+  document.getElementById("appointmentModal").style.display = "none"; 
+}
+
+function saveAppointment() {
+  let patient = document.getElementById("aptPatient").value.trim();
+  let doctor = document.getElementById("aptDoctor").value.trim();
+  let dateTime = document.getElementById("aptDateTime").value;
+  let reason = document.getElementById("aptReason").value;
+  let status = document.getElementById("aptStatus").value;
+  
+  if(!patient || !doctor || !dateTime) {
+    alert("Please fill Patient, Doctor and Date/Time");
+    return;
+  }
+  
+  if(window.currentEditAptId) {
+    // Edit existing appointment
+    let idx = appointments.findIndex(a => a.id === window.currentEditAptId);
+    if(idx !== -1) {
+      appointments[idx] = {...appointments[idx], patient, doctor, dateTime, reason, status};
+      showSuccessMessage("Appointment updated successfully!");
+    }
+  } else {
+    // Add new appointment
+    let newAppointment = {
+      id: "APT-" + Math.floor(1000 + Math.random()*9000),
+      patient: patient,
+      doctor: doctor,
+      dateTime: dateTime,
+      reason: reason,
+      status: status
+    };
+    appointments.push(newAppointment);
+    showSuccessMessage("Appointment scheduled successfully!");
+  }
+  
+  // Save to localStorage
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+  
+  // Refresh the appointments table
+  renderAppointmentsTable();
+  updateAllStats();
+  
+  // Close modal
+  closeAppointmentModal();
+}
+
+function showSuccessMessage(msg) {
+  let successDiv = document.getElementById("appointmentSuccessMsg");
+  successDiv.innerHTML = msg;
+  successDiv.style.display = "block";
+  setTimeout(() => {
+    successDiv.style.display = "none";
+  }, 3000);
+}
+
+function editAppointment(id) {
+  let apt = appointments.find(a => a.id === id);
+  if(apt) {
+    document.getElementById("aptPatient").value = apt.patient;
+    document.getElementById("aptDoctor").value = apt.doctor;
+    document.getElementById("aptDateTime").value = apt.dateTime;
+    document.getElementById("aptReason").value = apt.reason || "";
+    document.getElementById("aptStatus").value = apt.status;
+    window.currentEditAptId = apt.id;
+    updateDatalists();
+    document.getElementById("appointmentModal").style.display = "flex";
+  }
+}
+
+function deleteAppointment(id) {
+  if(confirm("Cancel this appointment?")) {
+    appointments = appointments.filter(a => a.id !== id);
+    localStorage.setItem("appointments", JSON.stringify(appointments));
+    renderAppointmentsTable();
+    updateAllStats();
+    showSuccessMessage("Appointment cancelled successfully!");
+  }
+}
+
+function renderAppointmentsTable() {
+  let tbody = document.getElementById("appointmentTableBody");
+  if(!tbody) return;
+  tbody.innerHTML = "";
+  
+  if(appointments.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No appointments found. Click "Schedule Appointment" to add one.</td></tr>';
+    return;
+  }
+  
+  appointments.forEach((apt, index) => {
+    let statusClass = apt.status === "Scheduled" ? "status-confirmed" : "";
+    let formattedDateTime = apt.dateTime ? apt.dateTime.replace('T', ' ') : apt.dateTime;
+    tbody.innerHTML += `<tr>
+      <td>${apt.id}</td>
+      <td>${apt.patient}</td>
+      <td>${apt.doctor}</td>
+      <td>${formattedDateTime || '-'}</td>
+      <td>${apt.reason || '-'}</td>
+      <td><span class="status-badge ${statusClass}">${apt.status}</span></td>
+      <td class="action-buttons">
+        <i class="fa-solid fa-pen edit-icon" onclick="editAppointment('${apt.id}')"></i>
+        <i class="fa-solid fa-trash delete-icon" onclick="deleteAppointment('${apt.id}')"></i>
+      </td>
+    </tr>`;
+  });
+}
+
+function filterAppointments() {
+  let q = document.getElementById("searchAppointment").value.toLowerCase();
+  let filtered = appointments.filter(a => 
+    a.patient.toLowerCase().includes(q) || 
+    a.doctor.toLowerCase().includes(q) || 
+    (a.dateTime && a.dateTime.includes(q))
+  );
+  
+  let tbody = document.getElementById("appointmentTableBody");
+  tbody.innerHTML = "";
+  
+  if(filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No matching appointments found.</td></tr>';
+    return;
+  }
+  
+  filtered.forEach(apt => {
+    let statusClass = apt.status === "Scheduled" ? "status-confirmed" : "";
+    let formattedDateTime = apt.dateTime ? apt.dateTime.replace('T', ' ') : apt.dateTime;
+    tbody.innerHTML += `<tr>
+      <td>${apt.id}</td>
+      <td>${apt.patient}</td>
+      <td>${apt.doctor}</td>
+      <td>${formattedDateTime || '-'}</td>
+      <td>${apt.reason || '-'}</td>
+      <td><span class="status-badge ${statusClass}">${apt.status}</span></td>
+      <td class="action-buttons">
+        <i class="fa-solid fa-pen edit-icon" onclick="editAppointment('${apt.id}')"></i>
+        <i class="fa-solid fa-trash delete-icon" onclick="deleteAppointment('${apt.id}')"></i>
+      </td>
+    </tr>`;
+  });
+}
+
+function saveAllData() {
+  localStorage.setItem("patients", JSON.stringify(patients));
+  localStorage.setItem("doctors", JSON.stringify(doctors));
+  localStorage.setItem("appointments", JSON.stringify(appointments));
+  updateAllStats();
+}
+
+function updateAllStats() {
+  document.getElementById("stat-patient-count").innerText = patients.length;
+  document.getElementById("stat-doctor-count").innerText = doctors.length;
+  document.getElementById("stat-appointment-count").innerText = appointments.length;
+  let admittedCount = patients.filter(p => p.status === "Admitted").length;
+  document.getElementById("stat-admitted-count").innerText = admittedCount;
+}
+
+function renderAllTables() {
+  renderPatients(patients);
+  renderDoctorsTable();
+  renderAppointmentsTable();
+}
+
+// Initialize - show login page first
+document.getElementById("authPage").style.display = "flex";
+document.getElementById("dashboard").style.display = "none";
+</script>
 </body>
 </html>
